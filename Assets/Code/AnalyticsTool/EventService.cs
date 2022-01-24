@@ -24,13 +24,13 @@ namespace Code.AnalyticsTool
             _cooldownWaiter = new WaitForSeconds(_cooldownBeforeSend);
             _sentRecordsCount = 0;
         
-            TryLoadEvents();
+            LoadEvents();
             StartCoroutine(ContinuesRequesting());
         }
 
         private void OnDestroy()
         {
-            TrySaveEvents();
+            SaveEvents();
         }
 
         public void TrackEvent(string type, string data)
@@ -41,7 +41,7 @@ namespace Code.AnalyticsTool
             _eventRecords.Enqueue(record);
         }
 
-        private void TryLoadEvents()
+        private void LoadEvents()
         {
             if (PlayerPrefs.HasKey(PlayerPrefsKey) == false)
                 _eventRecords = new Queue<TrackEventRecord>();
@@ -52,7 +52,7 @@ namespace Code.AnalyticsTool
             }
         }
 
-        private void TrySaveEvents()
+        private void SaveEvents()
         {
             var wrapper = PrepareWrapper();
 
@@ -93,7 +93,7 @@ namespace Code.AnalyticsTool
 
             if (request.responseCode == 200)
             {
-                Debug.Log($" {wrapper.Records.Length} records are successfully sent");
+                Debug.Log($" {_sentRecordsCount} records are successfully sent");
 
                 for (int i = 0; i < _sentRecordsCount; i++)
                     _eventRecords.Dequeue();
